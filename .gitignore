@@ -179,3 +179,18 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# VS Code
+.vscode/
+
+# Local scratch / sanity checks
+test_env.py
+scratch/
+tmp/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# dotenv variants
+.env.*
