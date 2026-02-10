@@ -20,16 +20,18 @@ def main() -> None:
 
     spine_path = Path("src/db/schema/create_spine_table.sql")
     core_path = Path("src/db/schema/games_boxscores_tables.sql")
+    lineups_path = Path("src/db/schema/lineups_tables.sql")
 
     spine_ddl = _read_sql(spine_path)
     core_ddl = _read_sql(core_path)
+    lineups_ddl = _read_sql(lineups_path)
 
     # One transaction: either all DDL applies, or none.
     with engine.begin() as conn:
-        conn.execute(text(spine_ddl))  # spine first
-        conn.execute(text(core_ddl))   # then the rest
-
-    print("tables created (spine + core)")
+        conn.execute(text(spine_ddl)) 
+        conn.execute(text(core_ddl))   
+        conn.execute(text(lineups_ddl))
+    print("tables created (spine, core and lineups)")
 
 
 if __name__ == "__main__":
