@@ -12,6 +12,11 @@ from nba_api.stats.endpoints import boxscoretraditionalv3
 
 from src.etl.nba_utils import call_with_retries
 
+from src.etl.nba_utils import call_with_retries
+from src.etl.parsing_utils import parse_int, parse_bool  
+from src.utils.logger import setup_logger 
+
+logger = setup_logger(__name__)  
 
 # -----------------------------
 # Failure logging
@@ -30,29 +35,6 @@ def log_failed_playerbox(game_id: str, err: Exception) -> None:
 # -----------------------------
 # Helpers
 # -----------------------------
-
-def parse_int(x: Any) -> Optional[int]:
-    if x is None:
-        return None
-    try:
-        return int(x)
-    except Exception:
-        return None
-
-
-def parse_bool(x: Any) -> Optional[bool]:
-    if x is None:
-        return None
-    if isinstance(x, bool):
-        return x
-    if isinstance(x, (int, float)):
-        return bool(x)
-    if isinstance(x, str):
-        if x.lower() in ("true", "t", "1", "yes", "y"):
-            return True
-        if x.lower() in ("false", "f", "0", "no", "n"):
-            return False
-    return None
 
 
 @dataclass
@@ -297,10 +279,10 @@ def load_dimplayer_boxscores(
         rows = rows[:limit]
 
     if not rows:
-        print("No missing player boxscores found. playerbox_pergame is up to date.")
+        logger.info("No missing player boxscores found. playerbox_pergame is up to date.")
         return
 
-    print(f"Found {len(rows)} games missing playerbox_pergame.")
+    logger.info(f"Found {len(rows)} games missing playerbox_pergame.")
 
     success = 0
     failed = 0
@@ -357,13 +339,13 @@ def load_dimplayer_boxscores(
                     )
 
             success += 1
-            print(f"[{i}/{len(rows)}] Loaded playerbox_pergame for game_id={game_id} (rows={len(box_rows)})")
+            logger.info(f"[{i}/{len(rows)}] Loaded playerbox_pergame for game_id={game_id} (rows={len(box_rows)})")
 
         except Exception as e:
             failed += 1
-            print(f"ERROR loading playerbox_pergame for game_id={game_id}: {e}")
+            logger.info(f"ERROR loading playerbox_pergame for game_id={game_id}: {e}")
             log_failed_playerbox(game_id, e)
 
         time.sleep(sleep_seconds)
 
-    print(f"Player boxscore load complete. Success={success}, Failed={failed}, Attempted={len(rows)}")
+    logger.info(f"Player boxscore load complete. Success={success}, Failed={failed}, Attempted={len(rows)}")

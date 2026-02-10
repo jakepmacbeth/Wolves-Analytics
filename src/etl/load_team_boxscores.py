@@ -12,6 +12,12 @@ from nba_api.stats.endpoints import boxscoretraditionalv3, boxscoreadvancedv3
 
 from src.etl.nba_utils import call_with_retries
 
+from src.etl.nba_utils import call_with_retries
+from src.etl.parsing_utils import parse_int, parse_float  
+from src.utils.logger import setup_logger  
+
+logger = setup_logger(__name__)  
+
 
 # -----------------------------
 # Failure logging
@@ -27,26 +33,6 @@ def log_failed_teambox(game_id: str, err: Exception) -> None:
         f.write(f"{game_id}\t{type(err).__name__}\t{err}\n")
 
 
-# -----------------------------
-# Helpers
-# -----------------------------
-
-def parse_int(x: Any) -> Optional[int]:
-    if x is None:
-        return None
-    try:
-        return int(x)
-    except Exception:
-        return None
-
-
-def parse_numeric(x: Any) -> Optional[float]:
-    if x is None:
-        return None
-    try:
-        return float(x)
-    except Exception:
-        return None
 
 
 @dataclass
@@ -262,11 +248,11 @@ def fetch_teambox_rows(
             tov=parse_int(tstats.get("turnovers") or tstats.get("tov")),
             pf=parse_int(tstats.get("foulsPersonal") or tstats.get("pf")),
 
-            off_rating=parse_numeric(astats.get("offensiveRating") or astats.get("offRating")),
-            def_rating=parse_numeric(astats.get("defensiveRating") or astats.get("defRating")),
-            net_rating=parse_numeric(astats.get("netRating")),
-            pace=parse_numeric(astats.get("pace")),
-            ts_pct=parse_numeric(astats.get("trueShootingPercentage") or astats.get("tsPct")),
+            off_rating=parse_float(astats.get("offensiveRating") or astats.get("offRating")),
+            def_rating=parse_float(astats.get("defensiveRating") or astats.get("defRating")),
+            net_rating=parse_float(astats.get("netRating")),
+            pace=parse_float(astats.get("pace")),
+            ts_pct=parse_float(astats.get("trueShootingPercentage") or astats.get("tsPct")),
         )
 
     home_row = make_row(home_team_id, True, away_team_id)
@@ -294,10 +280,10 @@ def load_teambox_scores(
         rows = rows[:limit]
 
     if not rows:
-        print("No missing team boxscores found. teambox_pergame is up to date.")
+        logger.info("No missing team boxscores found. teambox_pergame is up to date.")
         return
 
-    print(f"Found {len(rows)} games missing teambox_pergame.")
+    logger.info(f"Found {len(rows)} games missing teambox_pergame.")
 
     success = 0
     failed = 0
@@ -346,13 +332,13 @@ def load_teambox_scores(
                     )
 
             success += 1
-            print(f"[{i}/{len(rows)}] Loaded teambox_pergame for game_id={game_id}")
+            logger.info(f"[{i}/{len(rows)}] Loaded teambox_pergame for game_id={game_id}")
 
         except Exception as e:
             failed += 1
-            print(f"ERROR loading teambox_pergame for game_id={game_id}: {e}")
+            logger.error(f"ERROR loading teambox_pergame for game_id={game_id}: {e}")
             log_failed_teambox(game_id, e)
 
         time.sleep(sleep_seconds)
 
-    print(f"Team boxscore load complete. Success={success}, Failed={failed}, Attempted={len(rows)}")
+    logger.info(f"Team boxscore load complete. Success={success}, Failed={failed}, Attempted={len(rows)}")

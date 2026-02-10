@@ -6,6 +6,10 @@ from nba_api.stats.endpoints import LeagueGameFinder
 
 from src.db.engine import get_engine
 
+from src.db.engine import get_engine
+from src.utils.logger import setup_logger 
+
+logger = setup_logger(__name__)  
 
 def extract_gameids(season: str) -> list[str]:
     """
@@ -66,11 +70,11 @@ def upsert_game_ids(game_ids: Iterable[str], season: str) -> tuple[int, int]:
 
 
 def load_seasons(season: str) -> None:
-        print(f"\n=== Season {season} ===")
+        logger.info(f"\n=== Season {season} ===")
         game_ids = extract_gameids(season)
-        print(f"Fetched unique game_ids: {len(game_ids)}")
+        logger.info(f"Fetched unique game_ids: {len(game_ids)}")
 
         attempted, inserted = upsert_game_ids(game_ids, season=season)
-        print(f"Attempted inserts: {attempted}")
-        print(f"New games inserted: {inserted}")
+        logger.info(f"Attempted inserts: {attempted}")
+        logger.info(f"New games inserted: {inserted}")
 

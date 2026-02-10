@@ -11,11 +11,16 @@ from nba_api.stats.endpoints import boxscoresummaryv3
 
 from src.etl.nba_utils import call_with_retries
 
+from src.etl.nba_utils import call_with_retries
+from src.etl.parsing_utils import parse_int, parse_bool  
+from src.utils.logger import setup_logger  
+
+# Create logger for this module
+logger = setup_logger(__name__)  
 
 
-# -----------------------------
-# Helpers
-# -----------------------------
+
+# Helper
 
 def _safe_get(d: Dict[str, Any], path: List[str], default=None):
     """
@@ -27,31 +32,6 @@ def _safe_get(d: Dict[str, Any], path: List[str], default=None):
             return default
         cur = cur[p]
     return cur
-
-
-def parse_int(x: Any) -> Optional[int]:
-    if x is None:
-        return None
-    try:
-        return int(x)
-    except Exception:
-        return None
-
-
-def parse_bool(x: Any) -> Optional[bool]:
-    if x is None:
-        return None
-    if isinstance(x, bool):
-        return x
-    if isinstance(x, str):
-        if x.lower() in ("true", "t", "1", "yes", "y"):
-            return True
-        if x.lower() in ("false", "f", "0", "no", "n"):
-            return False
-    if isinstance(x, (int, float)):
-        return bool(x)
-    return None
-
 
 
 @dataclass
@@ -249,10 +229,10 @@ def load_game_structure(
         rows = rows[:limit]
 
     if not rows:
-        print("No missing games found. Game structure is up to date.")
+        logger.info("No missing games found. Game structure is up to date.")
         return
 
-    print(f"Found {len(rows)} spine games missing from nba.fact_games.")
+    logger.info(f"Found {len(rows)} spine games missing from nba.fact_games.")
 
     success = 0
     failed = 0
@@ -297,14 +277,15 @@ def load_game_structure(
                 )
 
             success += 1
-            print(f"[{i}/{len(rows)}] Loaded game structure for game_id={game_id}")
+            logger.info(f"[{i}/{len(rows)}] Loaded game structure for game_id={game_id}")
+
 
         except Exception as e:
             failed += 1
-            print(f"ERROR loading game_id={game_id}: {e}")
+            logger.error(f"ERROR loading game_id={game_id}: {e}")
 
         time.sleep(sleep_seconds)
 
-    print(
-        f"Game structure complete. Success={success}, Failed={failed}, Attempted={len(rows)}"
-    )
+    logger.info(
+    f"Game structure complete. Success={success}, Failed={failed}, Attempted={len(rows)}"
+)
