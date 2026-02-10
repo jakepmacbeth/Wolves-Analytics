@@ -349,3 +349,5 @@ LIMIT 10;
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+# Wolves - Analytics
+NBA analytics pipeline for Minnesota Timberwolves game reports and modeling.
