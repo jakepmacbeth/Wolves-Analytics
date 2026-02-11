@@ -40,23 +40,7 @@ def setup_logger(
     level: str = "INFO",
     console: bool = True,
 ) -> logging.Logger:
-    """
-    Configure logger with consistent formatting.
-    
-    Args:
-        name: Logger name (typically __name__ from calling module)
-        log_file: Optional file path for file handler
-        level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-        console: Whether to add console handler
-    
-    Returns:
-        logging.Logger: Configured logger instance
-    
-    Example:
-        >>> logger = setup_logger(__name__)
-        >>> logger.info("Processing started")
-        2024-02-10 10:30:45 - my_module - INFO - Processing started
-    """
+
     logger = logging.getLogger(name)
     
     # Convert string level to logging constant
@@ -96,19 +80,7 @@ def setup_logger(
 
 
 def get_default_log_file(process_name: str) -> Path:
-    """
-    Get default log file path for a process.
-    
-    Args:
-        process_name: Name of the ETL process
-    
-    Returns:
-        Path: Log file path with timestamp
-    
-    Example:
-        >>> get_default_log_file("daily_run")
-        Path('logs/daily_run_2024-02-10.log')
-    """
+
     today = datetime.now().strftime('%Y-%m-%d')
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)

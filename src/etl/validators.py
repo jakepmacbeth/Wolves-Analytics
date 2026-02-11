@@ -29,22 +29,7 @@ class DataValidator:
     
     @staticmethod
     def validate_game_insert(game_data: Dict[str, Any]) -> List[ValidationError]:
-        """
-        Validate game data meets business rules.
-        
-        Args:
-            game_data: Dictionary with game fields
-        
-        Returns:
-            List of validation errors (empty if valid)
-        
-        Example:
-            >>> game = {"game_id": "0022400123", "home_team_id": 1, "away_team_id": 1}
-            >>> errors = DataValidator.validate_game_insert(game)
-            >>> if errors:
-            ...     for error in errors:
-            ...         print(error)
-        """
+
         errors = []
         
         # Game ID validation
