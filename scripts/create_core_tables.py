@@ -10,12 +10,7 @@ def _read_sql(path: Path) -> str:
 
 
 def main() -> None:
-    """
-    Create core NBA schema tables.
-    Safe to re-run: uses CREATE TABLE IF NOT EXISTS.
-      1) create_spine_table.sql
-      2) games_boxscores_tables.sql
-    """
+
     engine = get_engine()
 
     spine_path = Path("src/db/schema/create_spine_table.sql")
