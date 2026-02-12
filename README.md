@@ -6,7 +6,7 @@
 [![PostgreSQL](https://img.shields.io/badge/postgresql-14+-blue.svg)](https://www.postgresql.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 🏀 Overview
+## Overview
 
 Wolves Analytics is an end-to-end ETL (Extract, Transform, Load) pipeline that:
 - Extracts NBA game data from the official NBA Stats API
@@ -64,7 +64,7 @@ Wolves Analytics is an end-to-end ETL (Extract, Transform, Load) pipeline that:
 
 ---
 
-## 🗄️ Data Model
+## Data Model
 
 ### Star Schema Design
 
@@ -196,7 +196,7 @@ python scripts/backfill_seasons.py 2024-25 --limit 10
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Run the test suite:
 
@@ -255,7 +255,7 @@ ETL_MAX_RETRIES=3        # Retry attempts
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Wolves-Analytics/
@@ -345,9 +345,7 @@ LIMIT 10;
 ---
 
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-# Wolves - Analytics
-NBA analytics pipeline for Minnesota Timberwolves game reports and modeling.
